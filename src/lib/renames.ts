@@ -16,13 +16,74 @@ export enum RenameType {
   THEME_OVERRIDES = "theme_overrides",
 }
 
+export const GD_RENAME_TYPES = [
+  RenameType.GD_FUNCTIONS,
+  RenameType.GD_PROPERTIES,
+  RenameType.GD_SIGNALS,
+];
+
+export const CS_RENAME_TYPES = [
+  RenameType.CS_FUNCTIONS,
+  RenameType.CS_PROPERTIES,
+  RenameType.CS_SIGNALS,
+];
+
+export const CATEGORIES = {
+  enums: [RenameType.ENUM],
+  functions: [RenameType.CS_FUNCTIONS, RenameType.GD_FUNCTIONS],
+  properties: [RenameType.CS_PROPERTIES, RenameType.GD_PROPERTIES],
+  signals: [RenameType.CS_SIGNALS, RenameType.GD_SIGNALS],
+  projectSettings: [RenameType.PROJECT_SETTINGS],
+  projectGodot: [RenameType.PROJECT_GODOT],
+  inputMap: [RenameType.INPUT_MAP],
+  builtinTypes: [RenameType.BUILTIN_TYPES],
+  shaders: [RenameType.SHADERS],
+  classes: [RenameType.CLASSES],
+  colors: [RenameType.COLORS],
+  themeOverrides: [RenameType.THEME_OVERRIDES],
+}
+
+export const CATEGORY_NAMES: Record<keyof typeof CATEGORIES, string> = {
+  enums: "Enumerations",
+  functions: "Functions",
+  properties: "Properties",
+  signals: "Signals",
+  projectSettings: "Project Settings",
+  projectGodot: "Godot Project Settings",
+  inputMap: "Input Map",
+  builtinTypes: "Builtin Types",
+  shaders: "Shaders",
+  classes: "Classes",
+  colors: "Colors",
+  themeOverrides: "Theme Overrides",
+}
+
+export const renameTypeToName = (type: RenameType) => {
+  let lang = null;
+
+  if (GD_RENAME_TYPES.includes(type)) {
+    lang = "GDScript";
+  }
+  if (CS_RENAME_TYPES.includes(type)) {
+    lang = "C#";
+  }
+
+  for (const [key, value] of Object.entries(CATEGORIES)) {
+    if (value.includes(type)) {
+      return CATEGORY_NAMES[key as keyof typeof CATEGORIES] + (lang ? ` (${lang})` : "");
+    }
+  }
+
+  throw new Error("No such rename type: " + type);
+}
+
 export type Rename = {
   from: string;
   to: string;
   type: RenameType;
 };
 
-export const RENAMES: Readonly<Rename[]> = Object.freeze([
+export const RENAMES: Rename[] = [
   {
     from: "BUTTON_LEFT",
     to: "MOUSE_BUTTON_LEFT",
@@ -8073,4 +8134,4 @@ export const RENAMES: Readonly<Rename[]> = Object.freeze([
     to: "theme_override_constants/table_h_separation",
     type: RenameType.THEME_OVERRIDES,
   },
-])
+];
